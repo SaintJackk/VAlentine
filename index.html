@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Will you be my Valentine?</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #ffc0cb 0%, #ffb6c1 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 60px 40px;
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .cat {
+            font-size: 80px;
+            margin-bottom: 20px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .heart {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 40px;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        h1 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            padding: 15px 40px;
+            font-size: 20px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .yes-btn {
+            background: #ff1493;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 20, 147, 0.4);
+        }
+
+        .yes-btn:hover {
+            background: #ff006e;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(255, 20, 147, 0.5);
+        }
+
+        .yes-btn:active {
+            transform: translateY(0);
+        }
+
+        .no-btn {
+            background: #e0e0e0;
+            color: #666;
+            cursor: pointer;
+            position: absolute;
+            transition: all 0.2s ease;
+        }
+
+        .note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+            font-style: italic;
+        }
+
+        /* Celebration Screen */
+        .celebration {
+            display: none;
+        }
+
+        .celebration.active {
+            display: block;
+        }
+
+        .celebration-image {
+            width: 300px;
+            height: 300px;
+            margin: 30px auto;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .yay {
+            font-size: 48px;
+            color: #ff1493;
+            font-weight: bold;
+            margin: 20px 0;
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #ff1493;
+            position: absolute;
+            animation: confetti-fall 3s linear;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Initial Question -->
+        <div id="question" class="question">
+            <div class="cat">
+                🐱
+                <span class="heart">💗</span>
+            </div>
+            <h1>Shorena will you be my valentine?</h1>
+            <div class="buttons">
+                <button class="yes-btn" onclick="sayYes()">Yes</button>
+                <button class="no-btn" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">No</button>
+            </div>
+            <p class="note">"No" seems a bit shy 💕</p>
+        </div>
+
+        <!-- Celebration Screen -->
+        <div id="celebration" class="celebration">
+            <div class="cat">
+                🐱
+                <span class="heart">💗</span>
+            </div>
+            <h1>Shorena will you be my valentine?</h1>
+            <div class="yay">YAY! 🎉</div>
+            <img src="https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&h=600&fit=crop" 
+                 alt="Celebration" 
+                 class="celebration-image"
+                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22%3E%3Crect fill=%22%23ff69b4%22 width=%22300%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2260%22 text-anchor=%22middle%22 dy=%22.3em%22%3E🎉💕🎊%3C/text%3E%3C/svg%3E'">
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const container = document.querySelector('.container');
+
+        function moveButton() {
+            const containerRect = container.getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            // Get container dimensions
+            const containerWidth = containerRect.width;
+            const containerHeight = containerRect.height;
+            const btnWidth = btnRect.width;
+            const btnHeight = btnRect.height;
+            
+            // Generate random position within container bounds
+            const maxX = containerWidth - btnWidth - 40; // 40px padding
+            const maxY = containerHeight - btnHeight - 40;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            // Apply position
+            noBtn.style.left = randomX + 'px';
+            noBtn.style.top = randomY + 'px';
+        }
+
+        function sayYes() {
+            document.getElementById('question').style.display = 'none';
+            document.getElementById('celebration').classList.add('active');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = ['#ff1493', '#ff69b4', '#ff6b9d', '#ffc0cb'][Math.floor(Math.random() * 4)];
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+    </script>
+</body>
+</html>
